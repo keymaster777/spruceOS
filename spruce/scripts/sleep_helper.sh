@@ -94,7 +94,6 @@ read_system_json_int() {
 
 trigger_sleep() {
     log_message "Entering sleep"
-    "$SYSTEM_EMIT" power "RUNNING" "SLEEP" "sleep_helper.sh" "entering sleep" || true
     lid_ever_closed=false
     sleep_exited=false
     # Get the lid powerdown timeout
@@ -102,8 +101,6 @@ trigger_sleep() {
     IDLE_TIMEOUT=$(get_shutdown_timer)
     start_ts=$(date +%s)
     set_volume 0 false # Mute on sleep so when we wake to shutdown it's silent
-    "$SYSTEM_EMIT" audio-from-current-to-cached-or-unknown "0" "sleep_helper.sh" "muted on sleep entry" || true
-    "$SYSTEM_EMIT" brightness-cached-or-unknown "sleep_helper.sh" "brightness baseline cached or unavailable on sleep entry" || true
     device_enter_sleep "$IDLE_TIMEOUT"
     if [ "$(device_uses_pseudo_sleep)" = "true" ]; then
         log_message "Device uses pseudosleep -- starting idle loop"
@@ -177,7 +174,6 @@ killall -q idlemon_mm.sh 2>/dev/null
 trigger_sleep
 
 device_exit_sleep
-"$SYSTEM_EMIT" power "SLEEP" "RUNNING" "sleep_helper.sh" "woke from sleep" || true
 
 log_activity_event "$current_app" "START"
 
@@ -187,9 +183,6 @@ case "$VOLUME_LV" in
     ''|*[!0-9]*) ;;
     *) set_volume "$VOLUME_LV" ;;
 esac
-"$SYSTEM_EMIT" audio-wake-restore "0" "$VOLUME_LV" "sleep_helper.sh" || true
-WAKE_BL="$(read_system_json_int '.backlight' || true)"
-"$SYSTEM_EMIT" brightness-wake-baseline "$WAKE_BL" "sleep_helper.sh" || true
 
 
 kill "$GET_EVENT_PID" 2>/dev/null

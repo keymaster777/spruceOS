@@ -280,7 +280,6 @@ EOF
 
     tmp=$(mktemp)
     jq ".backlight = $val" "$SYSTEM_JSON" > "$tmp" && mv "$tmp" "$SYSTEM_JSON"
-    "$SYSTEM_EMIT" brightness-level "$val" "trimui_a133p.sh/set_backlight" 2>/dev/null || true
 }
 
 
