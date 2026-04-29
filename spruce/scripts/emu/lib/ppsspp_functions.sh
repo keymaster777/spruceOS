@@ -60,11 +60,6 @@ run_ppsspp() {
 			;;
 	esac
 
-	# handle lack of analog sticks on Pixel2
-	case "$PLATFORM" in
-		"Pixel2") enable_digital_to_analog ;;
-	esac
-
 	# accommodate both relative and absolute paths for PPSSPP bin location
 	case "$PSP_BIN" in
 		"/"*) PPSSPPSDL="$PSP_BIN" ;;
